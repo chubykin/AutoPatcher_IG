@@ -1,0 +1,518 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About MCCMSG_TestBed"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,21,20
+    LTEXT           "MCCMSG_TestBed Version 1.0.0.5",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) Molecular Devices 2006",IDC_STATIC,40,25,
+                    119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_MCCMSG_TESTBED_DIALOG DIALOGEX 0, 0, 255, 279
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "MCCMSG_TestBed"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Select MultiClamp",IDC_STATIC,5,3,246,59
+    LTEXT           "Device:",IDC_STATIC,17,16,26,8
+    COMBOBOX        IDC_SELECTDEVICE,46,14,144,73,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Scan",IDC_SCAN,194,13,50,14
+    LTEXT           "Connection status",IDC_DEVICESTATUS,17,32,97,8
+    LTEXT           "Model",IDC_MODEL,119,32,125,8
+    LTEXT           "Serial Number",IDC_SERIALNUM,17,41,97,8
+    LTEXT           "COM port",IDC_COMPORTID,119,41,97,8
+    LTEXT           "Channel ID",IDC_CHANNELID,17,49,97,8
+    LTEXT           "Device ID",IDC_DEVICEID,119,49,97,8
+    GROUPBOX        "Mode",IDC_STATIC,5,63,71,24
+    CONTROL         "VC",IDC_BTN_VCLAMP,"Button",BS_AUTORADIOBUTTON | 
+                    BS_PUSHLIKE,12,72,17,11
+    CONTROL         "I=0",IDC_BTN_ICLAMPZERO,"Button",BS_AUTORADIOBUTTON | 
+                    BS_PUSHLIKE,30,72,17,11
+    CONTROL         "IC",IDC_BTN_ICLAMP,"Button",BS_AUTORADIOBUTTON | 
+                    BS_PUSHLIKE,48,72,17,11
+    GROUPBOX        "Compensation",IDC_STATIC,80,63,171,54
+    LTEXT           "Cp Fast:",IDC_STATIC,84,76,27,8
+    EDITTEXT        IDC_FASTCOMP_CAP,114,73,25,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_FASTCOMP_CAP_SPINNER,"msctls_updown32",
+                    UDS_ALIGNLEFT | UDS_ARROWKEYS,139,73,10,14
+    LTEXT           "pF",IDC_STATIC,151,76,9,8
+    EDITTEXT        IDC_FASTCOMP_TAU,163,73,25,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_FASTCOMP_TAU_SPINNER,"msctls_updown32",
+                    UDS_ALIGNLEFT | UDS_ARROWKEYS,188,73,10,14
+    LTEXT           "µs",IDC_STATIC,200,76,8,8
+    PUSHBUTTON      "Auto",IDC_FASTCOMP_AUTO,216,73,30,14
+    LTEXT           "Cp Slow:",IDC_STATIC,84,96,29,8
+    EDITTEXT        IDC_SLOWCOMP_CAP,114,94,25,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SLOWCOMP_CAP_SPINNER,"msctls_updown32",
+                    UDS_ALIGNLEFT | UDS_ARROWKEYS,139,94,10,14
+    LTEXT           "pF",IDC_STATIC,151,96,9,8
+    EDITTEXT        IDC_SLOWCOMP_TAU,163,94,25,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SLOWCOMP_TAU_SPINNER,"msctls_updown32",
+                    UDS_ALIGNLEFT | UDS_ARROWKEYS,188,94,10,14
+    LTEXT           "µs",IDC_STATIC,200,96,8,8
+    PUSHBUTTON      "Auto",IDC_SLOWCOMP_AUTO,216,94,30,14
+    CONTROL         "Resistance",IDC_METERRESIST,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,99,127,51,8
+    CONTROL         "Irms",IDC_METERIRMS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,99,137,29,8
+    GROUPBOX        "Inject Slow Current",IDC_STATIC,6,118,83,30
+    LTEXT           "Level:",IDC_STATIC,11,131,20,8
+    EDITTEXT        IDC_INJSLOWCURRENTLEVEL,32,129,25,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_INJSLOWCURRENTLEVEL_SPINNER,"msctls_updown32",
+                    UDS_ALIGNLEFT | UDS_ARROWKEYS,57,129,11,14
+    LTEXT           "mV",IDC_STATIC,71,131,11,8
+    GROUPBOX        "",IDC_STATIC,5,86,71,30
+    CONTROL         "Bridge Balance",IDC_BRIDGEBAL_ENBL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,11,87,64,10
+    PUSHBUTTON      "Auto",IDC_BRIDGEBAL_AUTO,11,98,30,14
+    GROUPBOX        "Primary Output:",IDC_STATIC,5,153,246,33
+    COMBOBOX        IDC_PRIMARYSIGNAL,61,151,175,73,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Meters",IDC_STATIC,93,118,158,30
+    LTEXT           "Gain:",IDC_STATIC,12,170,17,8
+    COMBOBOX        IDC_PRIMARYGAIN,30,168,38,116,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "LP Filter:",IDC_STATIC,83,170,27,8
+    COMBOBOX        IDC_PRIMARYLPF,112,168,38,116,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Hz",IDC_STATIC,152,170,10,8
+    LTEXT           "HP Filter:",IDC_STATIC,169,170,30,8
+    COMBOBOX        IDC_PRIMARYHPF,199,168,38,116,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Hz",IDC_STATIC,239,170,10,8
+    GROUPBOX        "Secondary Output:",IDC_STATIC,5,191,246,34
+    COMBOBOX        IDC_SECONDARYSIGNAL,72,189,174,73,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Gain:",IDC_STATIC,12,209,17,8
+    COMBOBOX        IDC_SECONDARYGAIN,30,207,38,116,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "LP Filter:",IDC_STATIC,83,209,27,8
+    COMBOBOX        IDC_SECONDARYLPF,112,207,38,116,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Hz",IDC_STATIC,152,209,10,8
+    GROUPBOX        "Pipette Offset",IDC_STATIC,5,225,114,31
+    PUSHBUTTON      "Pipette Offset",IDC_PIPETTEOFFSET,12,236,50,14
+    EDITTEXT        IDC_PIPETTEOFFSETVALUE,64,236,27,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_PIPETTEOFFSETVALUE_SPINNER,"msctls_updown32",
+                    UDS_ALIGNLEFT | UDS_ARROWKEYS,91,236,10,14
+    LTEXT           "mV",IDC_STATIC,103,239,11,8
+    PUSHBUTTON      "Zap",IDC_ZAP,127,236,30,14
+    COMBOBOX        IDC_ZAPDURATION,159,237,38,116,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "µs",IDC_STATIC,199,238,8,8
+    PUSHBUTTON      "Create DLL",IDC_CREATE,5,261,50,14
+    PUSHBUTTON      "Destroy DLL",IDC_DESTROY,62,261,50,14
+    DEFPUSHBUTTON   "Close",IDOK,201,261,50,14
+    GROUPBOX        "Zap",IDC_STATIC,122,225,129,31
+    PUSHBUTTON      "Get Meter 1",IDC_METER1,151,129,45,14
+    LTEXT           "??",IDC_METER1_VALUE,201,132,45,8
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,5
+ PRODUCTVERSION 1,0,0,5
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "Molecular Devices\0"
+            VALUE "FileDescription", "MCCMSG_TestBed MFC Application\0"
+            VALUE "FileVersion", "1.0.0.05\0"
+            VALUE "InternalName", "MCCMSG_TestBed\0"
+            VALUE "LegalCopyright", "Copyright ©  Molecular Devices 2006\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "MCCMSG_TestBed.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "MCCMSG_TestBed Application\0"
+            VALUE "ProductVersion", "1.0.0.05\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO MOVEABLE PURE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_MCCMSG_TESTBED_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 248
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 276
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_MCCMSG_TESTBED_DIALOG DLGINIT
+BEGIN
+    IDC_PRIMARYGAIN, 0x403, 2, 0
+0x0031, 
+    IDC_PRIMARYGAIN, 0x403, 2, 0
+0x0032, 
+    IDC_PRIMARYGAIN, 0x403, 2, 0
+0x0035, 
+    IDC_PRIMARYGAIN, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_PRIMARYGAIN, 0x403, 3, 0
+0x3032, "\000" 
+    IDC_PRIMARYGAIN, 0x403, 3, 0
+0x3035, "\000" 
+    IDC_PRIMARYGAIN, 0x403, 4, 0
+0x3031, 0x0030, 
+    IDC_PRIMARYGAIN, 0x403, 4, 0
+0x3032, 0x0030, 
+    IDC_PRIMARYGAIN, 0x403, 4, 0
+0x3035, 0x0030, 
+    IDC_PRIMARYGAIN, 0x403, 5, 0
+0x3031, 0x3030, "\000" 
+    IDC_PRIMARYGAIN, 0x403, 5, 0
+0x3032, 0x3030, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6530, 0x302b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e34, 0x6530, 0x302b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e36, 0x6530, 0x302b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e38, 0x6530, 0x302b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6532, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6534, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6536, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6538, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6532, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6534, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6536, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6538, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e33, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e34, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e36, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e38, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6532, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6534, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6536, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6538, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6530, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6532, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6534, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6536, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6538, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e33, 0x6530, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e34, 0x6530, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e36, 0x6530, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e38, 0x6530, 0x322b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6532, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6534, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6536, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6538, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6530, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6532, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6534, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6536, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6538, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e33, 0x6530, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e34, 0x6530, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e36, 0x6530, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e38, 0x6530, 0x332b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6532, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6534, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6536, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6538, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6530, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6532, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6534, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6536, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e32, 0x6538, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e33, 0x6530, 0x342b, "\000" 
+    IDC_PRIMARYLPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x352b, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e30, 0x6530, 0x302b, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x312d, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x302b, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e33, 0x6530, 0x302b, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e33, 0x6530, 0x312b, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x322b, "\000" 
+    IDC_PRIMARYHPF, 0x403, 7, 0
+0x2e33, 0x6530, 0x322b, "\000" 
+    IDC_SECONDARYGAIN, 0x403, 7, 0
+0x2e31, 0x6530, 0x302b, "\000" 
+    IDC_SECONDARYGAIN, 0x403, 7, 0
+0x2e32, 0x6530, 0x302b, "\000" 
+    IDC_SECONDARYGAIN, 0x403, 7, 0
+0x2e35, 0x6530, 0x302b, "\000" 
+    IDC_SECONDARYGAIN, 0x403, 7, 0
+0x2e31, 0x6530, 0x312b, "\000" 
+    IDC_SECONDARYGAIN, 0x403, 7, 0
+0x2e32, 0x6530, 0x312b, "\000" 
+    IDC_SECONDARYGAIN, 0x403, 7, 0
+0x2e35, 0x6530, 0x312b, "\000" 
+    IDC_SECONDARYGAIN, 0x403, 7, 0
+0x2e31, 0x6530, 0x322b, "\000" 
+    IDC_SECONDARYLPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x342b, "\000" 
+    IDC_SECONDARYLPF, 0x403, 7, 0
+0x2e31, 0x6530, 0x352b, "\000" 
+    IDC_ZAPDURATION, 0x403, 3, 0
+0x3532, "\000" 
+    IDC_ZAPDURATION, 0x403, 3, 0
+0x3035, "\000" 
+    IDC_ZAPDURATION, 0x403, 4, 0
+0x3031, 0x0030, 
+    IDC_ZAPDURATION, 0x403, 4, 0
+0x3032, 0x0030, 
+    IDC_ZAPDURATION, 0x403, 4, 0
+0x3035, 0x0030, 
+    IDC_ZAPDURATION, 0x403, 5, 0
+0x3031, 0x3030, "\000" 
+    IDC_ZAPDURATION, 0x403, 5, 0
+0x3032, 0x3030, "\000" 
+    IDC_ZAPDURATION, 0x403, 5, 0
+0x3035, 0x3030, "\000" 
+    IDC_ZAPDURATION, 0x403, 6, 0
+0x3031, 0x3030, 0x0030, 
+    IDC_ZAPDURATION, 0x403, 6, 0
+0x3032, 0x3030, 0x0030, 
+    IDC_ZAPDURATION, 0x403, 6, 0
+0x3035, 0x3030, 0x0030, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About MCCMSG_TestBed..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (Australia) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\MCCMSG_TestBed.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\MCCMSG_TestBed.ico"
+#endif    // English (Australia) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\MCCMSG_TestBed.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

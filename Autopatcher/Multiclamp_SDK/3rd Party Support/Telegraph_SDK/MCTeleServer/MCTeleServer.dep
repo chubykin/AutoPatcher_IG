@@ -1,0 +1,27 @@
+# Microsoft Developer Studio Generated Dependency File, included by MCTeleServer.mak
+
+.\MCTeleServer.cpp : \
+	"..\..\..\Comp\common\axodebug.h"\
+	"..\..\..\comp\common\multiclampbroadcastmsg.hpp"\
+	".\MCTeleServer.h"\
+	".\MCTeleServerDlg.h"\
+	".\StdAfx.h"\
+	
+
+.\MCTeleServer.rc : \
+	".\res\MCTeleServer.ico"\
+	".\res\MCTeleServer.rc2"\
+	
+
+.\MCTeleServerDlg.cpp : \
+	"..\..\..\Comp\common\axodebug.h"\
+	"..\..\..\comp\common\multiclampbroadcastmsg.hpp"\
+	".\MCTeleServer.h"\
+	".\MCTeleServerDlg.h"\
+	".\StdAfx.h"\
+	
+
+.\StdAfx.cpp : \
+	"..\..\..\Comp\common\axodebug.h"\
+	".\StdAfx.h"\
+	
