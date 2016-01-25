@@ -1,0 +1,97 @@
+@Author: Zhaolun W Su
+
+OverAll strategy:
+
+-> Find tip
+-> Focus on tip
+-> Find pixel per unit
+-> find Depth per unit
+
+Currently Under Development:
+
+Arm Automatic Calibration Algorihtm
+
+=====================================================================================================================================================================
+=======			Important Notes: 																															=========
+
+=======			There are repeated block of codes written. DO NOT remove them as they are making sure the data is updated. (No longer required)				=========
+=====================================================================================================================================================================
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Progress: 
+
+Date July 1 2015
+
+1. Installed MicroManager package
+2. Modified the CameraWidget class to use the MicroManager library for image aquisition. 
+
+Date July 3 2015
+
+1. Linked QTtest.pyw with new CameraWidget Class.
+
+Date July 5 2015
+
+1. In QTtest, added autofocus algorithm on pipette. Abandoned by stable version, but will be kept for future development.
+2. In QTtest, added small widget 'Logging Device' for debugging.
+
+Date July 6 2015
+
+1. 
+2. Modified the QTtest and CameraWidget class. Added code for directly accessing npFrame.
+3. Modified the QTtest.calibrateFirstX().
+4. Modified the MSSInterFace.initUnit() and ThreadQueue.run(). Changed wait time from 1.5 to 0.1
+
+Date July 7 2015
+
+1. In QTtest.py, changed drawforeground(). Since the direction of the grid moving is opposite of the actual pipette. I inverted the operands of deltay = self.lastcoords[1] - newcoords[1].
+2. In Grid.py, changed the ppum.
+3. Aligned the camera with the grid. But the camera is still a little bit off. Has to find a way for better calibration.
+4. Renamed all the windows opened by QTtest.pyw.
+5. In QTtest.pyw, fixed the button for opening the Patch Control window by adding a global variable and linking it.
+6. In QTtest.pyw, added hotkey Ctr+S for savign screenshot of maindisplay. 
+
+Date July 8 2015
+
+1. For scientifica maniutlators currentkeyboardmanip can be set to 0 all the time. Only current keyboardunit is used.
+2. 
+
+Date July 10 2015
+
+1. Finished Mannual Calibration 
+2. Added Secondary Cablibration Function
+3. The newly calibrated ppum is: self.pixelsperum1x = [.144055,.143518] This is the most accurate one so far
+4. If the calibration is off, check if the camera mount is loose.
+5. If the move manipulator to screen center function isn't working, check if the manipulators have reached their limit.
+6.
+
+Date July 12 2015
+
+1. Changed hardcode screencenter in Grid.py and QTtest.py
+
+Date July 13 2015
+
+1. Auto - Calibration Finished
+2. Important Note: There are repeated block of codes written. DO NOT remove them as they are making sure the data received is up to date. (No longer required)
+
+Date July 14-16 2015
+
+1. Water immersion test. Modified code for low contrast and water refraction
+2. Modified MSSIngerface.py, moveTo() and moveToRel() will check for finish before returning. (More robust control over Manipulators)
+
+Date July 17-19 2015
+
+1. High level control in patch control gui.
+2. Unified control for saving screenshot and data set
+3. Start loading configuration from csv file
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,242 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\MCTeleClient.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\MCTeleClient.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MCTELECLIENT_DIALOG DIALOGEX 0, 0, 202, 302
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "MultiClamp Telegraph Client"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Operating Mode:",IDC_STATIC,11,142,54,8
+    LTEXT           "Primary LPF Cutoff:",IDC_STATIC,11,182,61,8
+    LTEXT           "Membrane Capacitance:",IDC_STATIC,11,232,78,8
+    LTEXT           "Primary Output Signal:",IDC_STATIC,11,152,70,8
+    LTEXT           "Channel ID:",IDC_STATIC,15,35,38,8
+    GROUPBOX        "Select Server",IDC_STATIC,4,3,194,67
+    GROUPBOX        "Telegraph Packet ",IDC_STATIC,4,131,194,167
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_MODE,99,142,95,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_SIGNAL_PRI,99,152,95,
+                    8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_LPFCUTOFF_PRI,99,182,
+                    95,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_MEMBRANECAP,99,232,95,
+                    8
+    COMBOBOX        IDC_CHANNEL,64,33,24,69,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Connect",IDC_CONNECT,123,32,50,14
+    PUSHBUTTON      "&Request",IDC_REQUEST,123,50,50,14
+    LTEXT           "Primary Alpha:",IDC_STATIC,11,162,46,8
+    LTEXT           "Primary Scale Factor:",IDC_STATIC,11,172,68,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_ALPHA_PRI,99,162,95,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_SCALEFACTOR_PRI,99,
+                    172,95,8
+    LTEXT           "Ext. Cmd. Sensitivity:",IDC_STATIC,11,242,66,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_EXTCMDSENS,99,242,95,
+                    8
+    GROUPBOX        "Available Servers",IDC_STATIC,4,73,194,54
+    PUSHBUTTON      "&Broadcast",IDC_BROADCAST,123,95,50,14
+    LISTBOX         IDC_DEVICELIST,9,85,88,37,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Serial Number:",IDC_STATIC,15,17,47,8
+    COMBOBOX        IDC_SERIALNUM,64,15,52,110,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Scan",IDC_SCAN,123,14,50,14
+    LTEXT           "Secondary Alpha:",IDC_STATIC,11,202,57,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_SCALEFACTOR_SEC,99,
+                    212,95,8
+    LTEXT           "Secondary LPF Cutoff:",IDC_STATIC,11,222,72,8
+    LTEXT           "Secondary Output Signal:",IDC_STATIC,11,192,82,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_SIGNAL_SEC,99,192,95,
+                    8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_LPFCUTOFF_SEC,99,222,
+                    95,8
+    LTEXT           "Secondary Scale Factor:",IDC_STATIC,11,212,79,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_ALPHA_SEC,99,202,95,8
+    LTEXT           "Application Version:",IDC_STATIC,11,252,63,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_APPVER,99,252,95,8
+    LTEXT           "Firmware Version:",IDC_STATIC,11,262,56,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_FIRMVER,99,262,95,8
+    LTEXT           "DSP Version:",IDC_STATIC,11,272,43,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_DSPVER,99,272,95,8
+    LTEXT           "Serial Number:",IDC_STATIC,11,282,47,8
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_SN,99,282,95,8
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,0,0,0
+ PRODUCTVERSION 2,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "Axon Instruments, Inc.\0"
+            VALUE "FileDescription", "MultiClamp Commander Telegraph Client\0"
+            VALUE "FileVersion", "2.0.0.0\0"
+            VALUE "InternalName", "MCTeleClient\0"
+            VALUE "LegalCopyright", "Copyright ©  Molecular Devices 2006\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "MCTeleClient.exe\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "MCTeleClient Application\0"
+            VALUE "ProductVersion", "2.0.0.0\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_MCTELECLIENT_DIALOG DLGINIT
+BEGIN
+    IDC_CHANNEL, 0x403, 2, 0
+0x0031, 
+    IDC_CHANNEL, 0x403, 2, 0
+0x0032, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MCTELECLIENT_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 178
+        BOTTOMMARGIN, 300
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\MCTeleClient.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

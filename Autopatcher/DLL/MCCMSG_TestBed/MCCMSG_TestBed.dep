@@ -1,0 +1,22 @@
+# Microsoft Developer Studio Generated Dependency File, included by MCCMSG_TestBed.mak
+
+.\MCCMSG_TestBed.cpp : \
+	"..\AxMultiClampMsg.h"\
+	".\MCCMSG_TestBed.h"\
+	".\MCCMSG_TestBedDlg.h"\
+	
+
+.\MCCMSG_TestBed.rc : \
+	".\res\MCCMSG_TestBed.ico"\
+	".\res\MCCMSG_TestBed.rc2"\
+	
+
+.\MCCMSG_TestBedDlg.cpp : \
+	"..\AxMultiClampMsg.h"\
+	".\MCCMSG_TestBed.h"\
+	".\MCCMSG_TestBedDlg.h"\
+	
+
+.\StdAfx.cpp : \
+	".\StdAfx.h"\
+	

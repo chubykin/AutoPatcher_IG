@@ -1,0 +1,14 @@
+MinimumPositivePressure,40
+MinimumNegativePressure,-65
+PumpShortPulseTime,2
+PumpLongPulseTime,10
+SpontaneousPatchTime,3000
+SmallSuctionTime,8000
+GigaSealCheckTime,8000
+BreakInTime,10000
+TouchCellCoefficient,1.2
+SpontaneousGigaSealResistance,100
+FormingGigaSealResistance,200
+GigaSealFormedResistance,1000
+BrokenInResistance,50
+MaximumPipetteResistance,10

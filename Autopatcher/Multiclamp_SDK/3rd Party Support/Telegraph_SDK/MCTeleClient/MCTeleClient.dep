@@ -1,0 +1,22 @@
+# Microsoft Developer Studio Generated Dependency File, included by MCTeleClient.mak
+
+.\MCTeleClient.cpp : \
+	"..\..\..\comp\common\multiclampbroadcastmsg.hpp"\
+	".\MCTeleClient.h"\
+	".\MCTeleClientDlg.h"\
+	
+
+.\MCTeleClient.rc : \
+	".\res\MCTeleClient.ico"\
+	".\res\MCTeleClient.rc2"\
+	
+
+.\MCTeleClientDlg.cpp : \
+	"..\..\..\comp\common\multiclampbroadcastmsg.hpp"\
+	".\MCTeleClient.h"\
+	".\MCTeleClientDlg.h"\
+	
+
+.\StdAfx.cpp : \
+	".\StdAfx.h"\
+	
