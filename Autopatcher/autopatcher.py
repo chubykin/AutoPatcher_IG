@@ -1335,8 +1335,12 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
                     marker_patch=4
                 
         elif marker_patch==3: # stage 3 - small suction
+            global file_save_bool
             # print "to go 1 :", ok_to_go
             # print "to go 2 :", ok_to_go2
+            Ihold = self.mcc.getMeterValue(3)
+            if Ihold < -0.000000002:
+                marker_patch = 7
             if self.timer_fail is None:
                 self.timer_fail = datetime.datetime.now()
             else:
@@ -1345,6 +1349,7 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
                     print "Time exceeded 4 mins. Patching failed."
                     print "start at time:", self.timer_fail
                     print "fail at time:", datetime.datetime.now()
+                    file_save_bool = 0
                     marker_patch = 7
             
             #print "Current Resistance is ", current_resistance, " threshold is ", self.myConfig['FormingGigaSealResistance']
@@ -1393,12 +1398,15 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
                 QtCore.QTimer.singleShot(self.myConfig['SmallSuctionTime'],self.singleShot_slot)#SmallSuctionTime
                 ok_to_go=0
                 ok_to_go2=0
+
         elif marker_patch==4: # stage 4 - wait for giga-seal to form:
             # self.mcc.setMode(0);
             # self.mcc.setHoldingEnable(True);
             # self.mcc.setHoldingPotential(-0.07)            
             if ok_to_go==1:
-                if np.min(self.resistance_list[-100:-1])>self.myConfig['GigaSealFormedResistance']:
+                Ihold = self.mcc.getMeterValue(3)
+                print "Ihold is:", Ihold;
+                if np.min(self.resistance_list[-100:-1])>self.myConfig['GigaSealFormedResistance'] and Ihold > -0.00000000002:
                 #if current_resistance>self.myConfig['GigaSealFormedResistance']:
                     csvDictionary['GigasealResistance'] = current_resistance;
                     csvDictionary['GigasealTime'] = str(datetime.datetime.now())
@@ -1423,11 +1431,12 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
                 #if current_resistance<self.myConfig['BrokenInResistance']: # jump in current command after break in
                 if np.max(self.resistance_list[-20:-1])<self.myConfig['BrokenInResistance']:  # account for unstable resistance calculation
                     Ihold = self.mcc.getMeterValue(3)
-                    if Ihold > (-200*0.0000000000001) # Ihold needs to be bigger than -200 pA when R dropped to indicate broke-in
+                    if Ihold > -0.0000000002: # Ihold needs to be bigger than -200 pA when R dropped to indicate broke-in
                         global file_save_bool
                         file_save_bool = 0
                         marker_patch=6
                     else:
+                        file_save_bool = 0
                         marker_patch = 7 # Ihold dropped to lower than -200 pA means that we lost the patch after gigasealup
                 
                     """
@@ -1509,6 +1518,7 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
 
             elif file_save_bool==1:
                 marker_patch = 0
+                Ihold = None
                 #marker_patch=0
                 #self.fileQuit()
                 
@@ -1516,11 +1526,14 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
                 
         elif marker_patch==7: # marker_patch==7 - patching unsuccessful
             QtGui.QMessageBox.information(self,'', 'Patch unsuccessful. Please save patchlog, change pipette, and restart')
-            self.fileSave()
+            if file_save_bool == 0:
+                self.fileSave()
+                file_save_bool = 1
             self.mcc.setTestSignalEnable(False)
             self.mcc.setHoldingEnable(False)            
             self.mcc.setMode(2)
             marker_patch=0
+            Ihold = None
             #self.fileQuit()
            
 

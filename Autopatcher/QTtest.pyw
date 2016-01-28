@@ -1492,8 +1492,8 @@ class VideoDisplay(QGraphicsView):
         painter.setPen(QColor(0, 255, 0))
         
         #Write the SPEED and FPS readouts in the top left
-        painter.drawText(QPoint(6,15),"SPEED "+MSSInterface.Speed)    
-        painter.drawText(QPoint(6,30),"FPS "+str(self.myscene.FPSout))   
+        # painter.drawText(QPoint(6,15),"SPEED "+MSSInterface.Speed)    
+        # painter.drawText(QPoint(6,30),"FPS "+str(self.myscene.FPSout))   
         
 
         unitmanip = [False,False]
