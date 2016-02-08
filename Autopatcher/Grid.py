@@ -2,26 +2,9 @@
 """
 Created on Tue Dec 20 15:17:33 2011
 
-License: GPL version 3.0
-January 25, 2016
-Copyright:
+@author: Brendan Callahan
 
-This file is part of AutoPatcher_IG.
-
-    AutoPatcher_IG is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AutoPatcher_IG is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AutoPatcher_IG.  If not, see <http://www.gnu.org/licenses/>.
-
-@Author: Brendan Callahan, Zhaolun Su, Alexander A. Chubykin
+More development log in Will_Coding_Log file
 
 """
 
@@ -216,6 +199,13 @@ class Grid():
         print self.screenCenterUM[1]-y
         
         return [self.screenCenterUM[0]-x,self.screenCenterUM[1]-y]
+    def getDeltaToScreenCenterMouseToUMFromCoords40x(self, xx, yy):
+        x = xx/(self.pixelsperum[0])
+        y = yy/(self.pixelsperum[1])
+        print (self.screenCenterUM[0]/10)-x
+        print (self.screenCenterUM[1]/10)-y
+        print "::", [(self.screenCenterUM[0])-x,(self.screenCenterUM[1])-y]
+        return [(self.screenCenterUM[0])-x,(self.screenCenterUM[1])-y]
         
     def getPointUMtoPix(self,x,y):
         offset = [x-self.currentPoint[0]-self.screenCenterUM[0],y-self.currentPoint[1]-self.screenCenterUM[1]]

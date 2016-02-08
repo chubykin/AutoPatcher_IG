@@ -2,26 +2,9 @@
 """
 Created on Tue Dec 13 14:01:28 2011
 
-License: GPL version 3.0
-January 25, 2016
-Copyright:
+@author: Brendan Callahan, Alex Chubykin
 
-This file is part of AutoPatcher_IG.
-
-    AutoPatcher_IG is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AutoPatcher_IG is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AutoPatcher_IG.  If not, see <http://www.gnu.org/licenses/>.
-
-@Author: Brendan Callahan, Zhaolun Su, Alexander A. Chubykin
+More development log in Will_Coding_Log file
 
 """
 
@@ -46,6 +29,7 @@ import ManipPatcherControl
 import StoredCoordinates
 import gc
 import os
+from ComputerVision import *
 from scipy.cluster.hierarchy import *
 
 from datetime import datetime # Alex, added for screen capture 12/16/13
@@ -72,6 +56,7 @@ myCrosshairCursor = QCursor(QBitmap("mycrosshair.bmp"),QBitmap("mycrosshairmask.
 useDummyArrowsWindow = False
 
 numpyFrame = None;
+rawFrame = None;
 
 #the following logging device is for debug purposes
 logOutput = QTextEdit()
@@ -91,6 +76,9 @@ contourArea = [] # contour area list for cell detection
 template = None # template for cell Detection
 cellCentroids = []
 cluster_centroids = []
+
+GUIhandle_Scope = None;
+GUIHandle_Manip = None;
 
 
 class MainDisplay(QMainWindow):
@@ -885,6 +873,8 @@ class CameraScene(QGraphicsScene):
         self.pixmappointer = self.addPixmap(self.dispPixmap)
         global numpyFrame
         numpyFrame = copy.deepcopy(self._cameraDevice.npFrame)
+        global rawFrame
+        rawFrame = copy.deepcopy(self._cameraDevice.rawFrame)
 
         # global recording_status
         # global recording_frame_count
@@ -1492,8 +1482,8 @@ class VideoDisplay(QGraphicsView):
         painter.setPen(QColor(0, 255, 0))
         
         #Write the SPEED and FPS readouts in the top left
-        # painter.drawText(QPoint(6,15),"SPEED "+MSSInterface.Speed)    
-        # painter.drawText(QPoint(6,30),"FPS "+str(self.myscene.FPSout))   
+        painter.drawText(QPoint(6,15),"SPEED "+MSSInterface.Speed)    
+        painter.drawText(QPoint(6,30),"FPS "+str(self.myscene.FPSout))   
         
 
         unitmanip = [False,False]
@@ -2267,6 +2257,10 @@ class DeviceReadout(QWidget):
         self.ac = AutoCalibration(self)
         self.ac.sig.connect(self.returnCoefficient)
 
+        self.sc = SecondaryCalibration(self);
+        self.sc.sig.connect(self.returnSyncStage)
+        self.scState = 0;
+
         self.dc = DetectCell(self)
         self.dc.setTerminationEnabled(enabled = True)
         self.dc.sig.connect(self.returnCentroids)
@@ -2318,6 +2312,8 @@ class DeviceReadout(QWidget):
               
         #Microscope components
         if isStage == True:
+            global GUIhandle_Scope
+            GUIhandle_Scope = self;
             self.deviceLabel = QLabel("Microscope:")
             
             self.xAxis = QLabel("X:")    
@@ -2707,7 +2703,7 @@ class DeviceReadout(QWidget):
 
 
     def setEqualization(self):
-        cameraDevice.equalizationOn = self.equalizationCheckBox.isChecked()
+        cameraDevice.equalizationOn = GUIhandle_Scope.equalizationCheckBox.isChecked()
 
     def detectcell(self):
         if self.detecting_cell == False:
@@ -2897,15 +2893,24 @@ class DeviceReadout(QWidget):
         # self.calManiPosition = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
         # w1 = QLabel("Secondary Calibration Completed")
         # w1.show()
+        self.calibrateX2.setText("Calibrating Sync Point")
+        self.calibrateX2.setStyleSheet("QWidget {background-color: rgb(139,137,137); color: rgb(255,0,0); font-weight: bold}")
+        self.sc.start_calibration(self.parent.axisdirections)
 
+
+
+        return
+
+        #old mannual calibration
         self.syncPointStage = copy.deepcopy(MSSInterface.getCoords(0,0))
         self.syncPointM = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
         #MSSInterface.askCoords()
         self.calX1Stage = copy.deepcopy(MSSInterface.getCoords(0,0))
         self.calX1M = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
-
+        
         QMessageBox.information(self, 'Secondary Calibration Finished', 'Please Check Magnification.')
 
+        
 
     
     def calibrateAxial(self):
@@ -2943,6 +2948,8 @@ class DeviceReadout(QWidget):
         
     #Changes magnification by calling a method in grid
     def radioButtonChange(self):
+
+        
         altarrows = None
         if useDummyArrowsWindow == True:
             altarrows = self.parent.parent.myarrowsalternate.deviceReadout[self.unitnum][self.manipnum]
@@ -3233,6 +3240,38 @@ class DeviceReadout(QWidget):
         return clickpointcoords
 
 
+    @pyqtSlot()
+    def returnSyncStage(self):
+
+        if self.scState == 1:
+            # swtich to 40x pop up
+            # Switch to 40x and perform vertical calibration
+            QMessageBox.information(self, ' ', 'Switch Microscope to 40x and Continue')
+            GUIhandle_Scope.magRadioButton40x.setChecked(True)    
+            GUIhandle_Scope.radioButtonChange();
+            # Post switch singal
+            self.scState = 2;
+            return;
+
+
+
+        print "Finished Secondary Calibration"
+
+        self.calibrateX2.setText("Secondary Calibration") 
+        self.calibrateX2.setStyleSheet("QWidget {background-color: rgb(139,137,137); color: rgb(255,255,255); font-weight: bold}")
+            
+
+        #old mannual calibration
+        self.syncPointStage = copy.deepcopy(MSSInterface.getCoords(0,0))
+        self.syncPointM = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
+        #MSSInterface.askCoords()
+        self.calX1Stage = copy.deepcopy(MSSInterface.getCoords(0,0))
+        self.calX1M = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
+        
+        QMessageBox.information(self, 'Secondary Calibration Finished', 'Please Check Magnification.')
+
+
+        pass
 
     @pyqtSlot()
     def returnCoefficient(self):
@@ -4128,6 +4167,468 @@ class VideoRecording(QThread):
                 movie_file.write(ptr)
             time.sleep(0.04)
 
+class SecondaryCalibration(QThread):
+    sig = pyqtSignal()
+    def __init__(self, owner, parent = None):
+        QThread.__init__(self, parent)
+        self.owner = owner
+        self.Vision = ComputerVision()
+
+    def start_calibration(self,axisdirections):
+        self.axisdirections = copy.deepcopy(axisdirections);
+        self.start()
+
+    def findPipetteTip(self, stage):
+        #finding tip of pipette
+        img_1 = copy.deepcopy(numpyFrame)
+        time.sleep(0.5)
+        img_2 = copy.deepcopy(numpyFrame)
+        diff = numpy.subtract(img_1, img_2)
+        #Wait for stable image
+        while numpy.var(diff) > 20000:
+            print numpy.var(diff)
+            img_1 = copy.deepcopy(img_2)
+            time.sleep(0.5)
+            img_2 = copy.deepcopy(numpyFrame)
+            diff = numpy.subtract(img_1, img_2)
+        img = copy.deepcopy(numpyFrame)
+        img = cv2.GaussianBlur((img), (5,5),0)
+        edges = cv2.Canny(img,30,100)
+
+        minimum_length = 15;
+        linecount = 0;
+        # cv2.imshow("img %d" % stage, img)
+        # cv2.imshow('edges', edges)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
+        while 1:
+            linecount = 0;
+            lines_unsorted = cv2.HoughLines(edges,1,numpy.pi/180,minimum_length)[0]
+
+            #For eliminating adjacent lines
+            lines = sorted(lines_unsorted,key=lambda lines_unsorted:lines_unsorted[1])
+            average_theta = (lines[-1][1] - lines[0][1])/len(lines)
+            print "average theta is ", average_theta
+
+            for rho,theta in lines:
+                linecount = linecount + 1;
+                print rho, theta
+            
+            if linecount > 5: #10
+                minimum_length = minimum_length + 2;
+            elif linecount < 3: #5
+                minimum_length = minimum_length -2
+            else:
+                black_board = numpy.zeros((img.shape[0], img.shape[1]), numpy.uint8)
+                aftermath = 0
+
+                for index,[rho,theta] in enumerate(lines):
+
+                    theta_difference = abs(theta - lines[index-1][1])
+                    print "index is ", index," theta difference ", theta_difference
+                    #if (index is not 0) & (index is not (len(lines) - 1)) and (theta_difference < average_theta):
+                    if (index is not 0) & (index is not (len(lines) - 1)):
+                        
+                        print "Adjacent line deleted"
+                    else:
+                        a = numpy.cos(theta)
+                        b = numpy.sin(theta)
+                        x0 = a*rho
+                        y0 = b*rho
+                        x1 = int(x0 + 1000*(-b))
+                        y1 = int(y0 + 1000*(a))
+                        x2 = int(x0 - 1000*(-b))
+                        y2 = int(y0 - 1000*(a))
+                        #cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
+                        temp = numpy.zeros((img.shape[0], img.shape[1]), numpy.uint8)
+                        cv2.line(temp,(x1,y1),(x2,y2),(10,10,10),2)
+                        black_board = black_board + temp;
+                        aftermath = aftermath + 1
+                break
+
+        print 'minimum_length is ', minimum_length, 'linecount is ', linecount
+        temp_board = black_board.copy();
+        G_blur = cv2.GaussianBlur((temp_board), (5,5),0)
+        (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(G_blur)
+
+        #Find the nearest edge detection to the point
+        # offset_x = 0
+        # offset_y = 0
+        # found = 0
+        # while edges[maxLoc[0]][maxLoc[1]] == 0 :
+        #     offset = 1
+        #     aoi_x = edges[(maxLoc[0] - offset):(maxLoc[0] + offset + 1)]
+        #     aoi = []
+        #     for a in aoi_x:
+        #         aoi.append(a[(maxLoc[1] - offset):(maxLoc[1] + offset + 1)])
+        #     print "aoi is ", aoi
+
+        #     for i, x in enumerate(aoi):
+        #         #print x
+        #         for ii, y in enumerate(x):
+        #             if y != 0:
+        #                 offset_x = i
+        #                 offset_y = ii
+        #                 found = 1
+        #                 print 'break'
+        #                 break
+        #         if found == 1:
+        #             print 'break'
+        #             break
+
+        #     if found == 1:
+        #         print 'break'
+        #         break
+        #     offset = offset + 1
+        #     print offset
+        # maxLoc_list = list(maxLoc)
+        # maxLoc_list[0] = maxLoc_list[0] + offset_x
+        # maxLoc_list[1] = maxLoc_list[1] + offset_y
+        # maxLoc = tuple(maxLoc_list)
+        logOutput.append("Tip at %d, %d " % (maxLoc[0], maxLoc[1]))
+        min_distance = 1000000
+        offset_x = 100
+        offset_y = 100
+        for i, x in enumerate(edges):
+            for ii, y in enumerate(edges):
+                if edges[i][ii] == 0:
+                    pass
+                else:
+                    min_temp = (i-maxLoc[1])**2 + (ii - maxLoc[0])**2
+                    if min_temp < min_distance:
+                        offset_x = i
+                        offset_y = ii
+                        min_distance = min_temp
+
+        
+        
+        #logOutput.append("Tip value %d" % edges[offset_x][offset_y])
+        
+        #logOutput.append("Tip not on edge")
+        maxLoc_list = list(maxLoc)
+        maxLoc_list[0] = offset_y
+        maxLoc_list[1] = offset_x
+        maxLoc = tuple(maxLoc_list)
+
+        
+        new_cropped_edge = edges[(maxLoc_list[1]-50):(maxLoc_list[1]+50) , (maxLoc_list[0]-50):(maxLoc_list[0]+50)]
+        new_cropped_img = img[(maxLoc_list[1]-50):(maxLoc_list[1]+50) , (maxLoc_list[0]-50):(maxLoc_list[0]+50)]
+        
+        old_maxLoc = copy.deepcopy(maxLoc)
+
+        minimum_length = 10
+        while 1:
+            linecount = 0;
+            lines_unsorted = cv2.HoughLines(new_cropped_edge,1,numpy.pi/180,minimum_length)[0]
+            #For eliminating adjacent lines
+            cropped_lines = sorted(lines_unsorted,key=lambda lines_unsorted:lines_unsorted[1])
+            average_theta = (cropped_lines[-1][1] - cropped_lines[0][1])/len(cropped_lines)
+            print "sorted"
+            for rho,theta in cropped_lines:
+                linecount = linecount + 1;
+                print theta
+
+            
+            if linecount > 8: #10
+                minimum_length = minimum_length + 1;
+            elif linecount < 3: #5
+                minimum_length = minimum_length -1
+            else:
+                cropped_black_board = numpy.zeros((new_cropped_edge.shape[0], new_cropped_edge.shape[1]), numpy.uint8)
+                all_lines_black_board = numpy.zeros((new_cropped_edge.shape[0], new_cropped_edge.shape[1]), numpy.uint8)
+                aftermath = 0
+                for index,[rho,theta] in enumerate(cropped_lines):
+                    theta_difference = abs(theta - cropped_lines[index-1][1])
+                    print "index is ", index," theta difference ", theta_difference
+                    #if (index is not 0) & (index is not (len(cropped_lines) - 1)) and (theta_difference < average_theta):
+                    if (index is not 0) & (index is not (len(cropped_lines) - 1)):
+                        
+                        print "Adjacent line deleted"
+                    else:
+
+                        a = numpy.cos(theta)
+                        b = numpy.sin(theta)
+                        x0 = a*rho
+                        y0 = b*rho
+                        x1 = int(x0 + 1000*(-b))
+                        y1 = int(y0 + 1000*(a))
+                        x2 = int(x0 - 1000*(-b))
+                        y2 = int(y0 - 1000*(a))
+                        #cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
+                        temp = numpy.zeros((new_cropped_edge.shape[0], new_cropped_edge.shape[1]), numpy.uint8)
+                        cv2.line(temp,(x1,y1),(x2,y2),(10,10,10),2)
+                        cropped_black_board = cropped_black_board + temp;
+                        aftermath = aftermath + 1
+                    a = numpy.cos(theta)
+                    b = numpy.sin(theta)
+                    x0 = a*rho
+                    y0 = b*rho
+                    x1 = int(x0 + 1000*(-b))
+                    y1 = int(y0 + 1000*(a))
+                    x2 = int(x0 - 1000*(-b))
+                    y2 = int(y0 - 1000*(a))
+                    #cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
+                    temp = numpy.zeros((new_cropped_edge.shape[0], new_cropped_edge.shape[1]), numpy.uint8)
+                    cv2.line(all_lines_black_board,(x1,y1),(x2,y2),(10,10,10),2)
+                    cropped_black_board = cropped_black_board + temp;
+                break
+
+        temp_board = cropped_black_board.copy();
+        G_blur = cv2.GaussianBlur((temp_board), (5,5),0)
+        (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(G_blur)
+
+        min_distance = 1000000
+        offset_x = 100
+        offset_y = 100
+        for i, x in enumerate(new_cropped_edge):
+            for ii, y in enumerate(new_cropped_edge):
+                if new_cropped_edge[i][ii] == 0:
+                    pass
+                else:
+                    min_temp = (i-maxLoc[1])**2 + (ii - maxLoc[0])**2
+                    if min_temp < min_distance:
+                        offset_x = i
+                        offset_y = ii
+                        min_distance = min_temp
+        cropped_maxLoc_list = list(maxLoc)
+        cropped_maxLoc_list[0] = offset_y
+        cropped_maxLoc_list[1] = offset_x
+        cropped_maxLoc = tuple(cropped_maxLoc_list)
+        cv2.circle(new_cropped_edge, cropped_maxLoc, 2, (255, 255, 255), 2)
+
+        cv2.imshow('contour', numpy.concatenate((new_cropped_img, new_cropped_edge, cropped_black_board, all_lines_black_board), axis = 1))
+
+        maxLoc_list = list(maxLoc)
+        maxLoc_list[0] = cropped_maxLoc[0] - 50 + old_maxLoc[0]
+        maxLoc_list[1] = cropped_maxLoc[1] - 50 + old_maxLoc[1]
+        maxLoc = tuple(maxLoc_list)
+
+
+        # # #### contour test
+        # inverted_img = 255 - new_cropped_img
+
+        # new_cropped_img = inverted_img - new_cropped_edge
+        # imgray = copy.deepcopy(new_cropped_img)
+        # ret,thresh = cv2.threshold(imgray,127,255,0)
+        # contours, hierarchy = cv2.findContours(imgray,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        # cv2.drawContours(imgray, contours, -1, (0,255,0), 3)
+        # cv2.imshow('contour', numpy.concatenate((imgray,new_cropped_img, new_cropped_edge,inverted_img), axis = 1))
+        # # ####
+
+        
+
+        cv2.circle(edges, maxLoc, 2, (255, 255, 255), 1)
+        cv2.circle(black_board, maxLoc, 2, (255, 255, 255), 1)
+        cv2.circle(img, maxLoc, 2, (255, 255, 255), 1)
+        #cv2.imshow("Stage %d" % stage, numpy.concatenate((img), axis = 1))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        #logOutput.append("Tip at %d, %d " % (maxLoc[0], maxLoc[1]))
+        logOutput.append("Offset on tip is %d, %d" % (maxLoc[0], maxLoc[1]))
+        clickpointcoords = grid.getDeltaToScreenCenterMouseToUMFromCoords(maxLoc[0], maxLoc[1])
+
+        return clickpointcoords
+
+    def run(self):
+
+        u = 2
+        m = 0
+
+        # Adjust brightness
+
+        while True:
+            cameraDevice._queryFrame()
+            if numpy.average(rawFrame) < 90:
+                exposure = int(GUIhandle_Scope.exposureField.text())
+                cameraDevice.setExposure(exposure + 5)
+                GUIhandle_Scope.exposureField.setText(str(exposure + 5))
+    
+            elif numpy.average(rawFrame) > 120:
+                exposure = int(GUIhandle_Scope.exposureField.text())
+                cameraDevice.setExposure(exposure - 5)
+                GUIhandle_Scope.exposureField.setText(str(exposure - 5))
+            else:
+                break
+            cameraDevice._queryFrame()
+            time.sleep(0.2) # sleep 0.2 sec
+
+        print "Exposure adjustment finished"
+
+        # Turn on Equalization
+
+        GUIhandle_Scope.equalizationCheckBox.setChecked(True)
+        self.owner.setEqualization()
+
+        
+
+        # at 4x find pipette tip and move camera center to it.
+        while True:
+
+            cameraDevice._queryFrame()  
+            clickpointcoords = self.findPipetteTip(1)
+            currentDistance = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
+            if currentDistance < 10:
+                break
+            currentcoords = copy.deepcopy(MSSInterface.getCoords(0,0))
+            clickpointcoords[0] += currentcoords[0]
+            clickpointcoords[1] += currentcoords[1]
+            clickpointcoords.append(currentcoords[2])
+            MSSInterface.moveTo(0,0,clickpointcoords[0],clickpointcoords[1],clickpointcoords[2])
+
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+
+        self.owner.scState = 1;
+        self.sig.emit()
+
+        # Switch Magnification to 40x 
+
+        GUIhandle_Scope.magRadioButton40x.setChecked(True)
+        GUIhandle_Scope.radioButtonChange
+
+        # Wait for the swtich to 40x
+        while self.owner.scState != 2:
+            time.sleep(0.02) 
+
+        # Adjust brightness
+
+        while True:
+            cameraDevice._queryFrame()
+            if numpy.average(rawFrame) < 90:
+                exposure = int(GUIhandle_Scope.exposureField.text())
+                cameraDevice.setExposure(exposure + 5)
+                GUIhandle_Scope.exposureField.setText(str(exposure + 5))
+    
+            elif numpy.average(rawFrame) > 120:
+                exposure = int(GUIhandle_Scope.exposureField.text())
+                cameraDevice.setExposure(exposure - 5)
+                GUIhandle_Scope.exposureField.setText(str(exposure - 5))
+            else:
+                break 
+            time.sleep(0.2)   
+
+        stepSize = 30
+        direction = -1
+
+        # Move to pipette (Adjustment for refraction) 
+        while True:
+            print "focusing under 40x"
+            MSSInterface.moveToRel(0,0,0,0, direction*stepSize)
+            cameraDevice._queryFrame()
+            print "matching 40x template" 
+            result = self.Vision.getTemplateMatchResult(copy.deepcopy(rawFrame), GUIhandle_Scope.equalizationCheckBox.isChecked());
+            print "matching finished"
+            if result:
+                break
+
+        print "40x fine adjustment"
+        # Pipette Found,  Searching for pipette tip
+        stepSize = 5
+
+        previousDistance = 999999
+        distance = 999999
+        direction = 1
+        changedDirectionCount = 0
+
+
+        #Precise Focus on 40x
+        # IMPORTANT: numpyFrame is inverted in accomodation for the microscope alignment. The rawFrame is the original frame for template matching purpose
+
+        while True:
+            
+            MSSInterface.moveToRel(0,0,0,0, stepSize*direction)
+            cameraDevice._queryFrame()
+            matchedTemplateIndex = self.Vision.findBestMatchingTemplate(rawFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())
+            print "+++++++++++++++++++++++++ Matched Template is ",  matchedTemplateIndex, "  +++++++++++++++++++++++++" 
+            print "+++++++++++++++++++++++++ changedDirectionCount ", changedDirectionCount, "  +++++++++++++++++++++++++" 
+            if matchedTemplateIndex == 1:
+                break; 
+            if matchedTemplateIndex > 1 and direction < 0:
+                changedDirectionCount = changedDirectionCount + 1;
+                direction = 1;
+                if stepSize > 2:
+                    stepSize = stepSize - 1;
+            if matchedTemplateIndex < 1 and direction > 0:
+                changedDirectionCount = changedDirectionCount + 1;
+                direction = -1;
+                if stepSize > 2:
+                    stepSize = stepSize - 1;
+            if changedDirectionCount > 5 and matchedTemplateIndex == 2:
+                break;
+            # distance = self.Vision.fourtyXPipetteDetectionDistance(numpyFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())
+            # correlation = self.Vision.getTemplateMatchingCoefficient(numpyFrame, GUIhandle_Scope.equalizationCheckBox.isChecked());
+            # if distance < 1500:
+            #     break
+            # if correlation < 100000:
+            #     direction = direction * (-1)
+
+
+        # IMPORTANT: numpyFrame is inverted in accomodation for the microscope alignment. The rawFrame is the original frame for template matching purpose
+
+        # Move Camera to center pipette tip
+        u = 2
+        m = 0
+
+
+
+        while True:
+            cameraDevice._queryFrame()
+            clickpointcoords = self.Vision.fourtyXPipetteDetectionCorrdinate(numpyFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())  
+            
+            currentDistance = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
+            if currentDistance < 200:
+                break
+            
+            #40x adjustment, divide result by 10 (clickpointcoords is in terms of 4x from previous claculation)
+            clickpointcoords = grid.getDeltaToScreenCenterMouseToUMFromCoords40x(clickpointcoords[0], clickpointcoords[1])
+            # clickpointcoords[0] = clickpointcoords[0]/10
+            # clickpointcoords[1] = clickpointcoords[1]/10
+            # currentcoords = copy.deepcopy(MSSInterface.getCoords(0,0))
+            # clickpointcoords[0] += currentcoords[0]
+            # clickpointcoords[1] += currentcoords[1]
+            # clickpointcoords.append(currentcoords[2])
+            # MSSInterface.moveTo(0,0,clickpointcoords[0],clickpointcoords[1],clickpointcoords[2])
+            print "Moving to relative position:", clickpointcoords 
+            MSSInterface.moveToRel(0,0,clickpointcoords[0], clickpointcoords[1], 0);
+            
+            currentDistanceUM = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
+            if currentDistanceUM < 5:
+                break
+
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+        
+
+        self.sig.emit()
+        return
+
+
+    def waitForStableImage(self):
+        img_1 = copy.deepcopy(numpyFrame)
+        time.sleep(0.5)
+        img_2 = copy.deepcopy(numpyFrame)
+        diff = numpy.subtract(img_1, img_2)
+        #Wait for stable image
+        while numpy.var(diff) > 20000:
+            print "wait for stable image", numpy.var(diff)
+            img_1 = copy.deepcopy(img_2)
+            time.sleep(0.5)
+            img_2 = copy.deepcopy(numpyFrame)
+            diff = numpy.subtract(img_1, img_2)
+
          
 class AutoCalibration(QThread):
     #Autocalibration signal
@@ -4174,6 +4675,7 @@ class AutoCalibration(QThread):
         
         self.MStageCoordinates = [None,None,None]
         self.Mmotorcoords = [None,None,None]
+
     def findPipetteTipInPixel(self):
         #Same idea as findPipetteTipInPixel() But this one returns in pixel unit
         #finding tip of pipette
@@ -4513,6 +5015,7 @@ class AutoCalibration(QThread):
         logOutput.append("Offset on tip is %d, %d" % (maxLoc[0], maxLoc[1]))
         clickpointcoords = grid.getDeltaToScreenCenterMouseToUMFromCoords(maxLoc[0], maxLoc[1])
         return clickpointcoords
+
     def start_calibration(self,axisdirections):
         self.axisdirections = copy.deepcopy(axisdirections);
         self.start()
@@ -4522,6 +5025,57 @@ class AutoCalibration(QThread):
         u = 2
         m = 0
         devreadout = self
+
+
+        # Adjust brightness
+
+        while True:
+            cameraDevice._queryFrame()
+            if numpy.average(rawFrame) < 90:
+                exposure = int(GUIhandle_Scope.exposureField.text())
+                cameraDevice.setExposure(exposure + 5)
+                GUIhandle_Scope.exposureField.setText(str(exposure + 5))
+    
+            elif numpy.average(rawFrame) > 120:
+                exposure = int(GUIhandle_Scope.exposureField.text())
+                cameraDevice.setExposure(exposure - 5)
+                GUIhandle_Scope.exposureField.setText(str(exposure - 5))
+            else:
+                break
+            cameraDevice._queryFrame()
+            time.sleep(0.2) # sleep 0.2 sec
+
+        print "Exposure adjustment finished"
+
+        # Turn on Equalization
+
+        GUIhandle_Scope.equalizationCheckBox.setChecked(True)
+        self.owner.setEqualization()
+
+        
+
+        # at 4x find pipette tip and move camera center to it.
+        while True:
+
+            cameraDevice._queryFrame()  
+            clickpointcoords = self.findPipetteTip(1)
+            currentDistance = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
+            if currentDistance < 5:
+                break
+            currentcoords = copy.deepcopy(MSSInterface.getCoords(0,0))
+            clickpointcoords[0] += currentcoords[0]
+            clickpointcoords[1] += currentcoords[1]
+            clickpointcoords.append(currentcoords[2])
+            MSSInterface.moveTo(0,0,clickpointcoords[0],clickpointcoords[1],clickpointcoords[2])
+
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(u,m)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
+            print "Update", MSSInterface.getCoords(0,0)
 
         
         self.syncPointStage = copy.deepcopy(MSSInterface.getCoords(0,0))
