@@ -2,9 +2,26 @@
 """
 Created on Tue Dec 13 14:01:28 2011
 
-@author: Brendan Callahan, Alex Chubykin
+License: GPL version 3.0
+January 25, 2016
+Copyright:
 
-More development log in Will_Coding_Log file
+This file is part of AutoPatcher_IG.
+
+    AutoPatcher_IG is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    AutoPatcher_IG is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with AutoPatcher_IG.  If not, see <http://www.gnu.org/licenses/>.
+
+@Author: Zhaolun Su, Brendan Callahan, Alexander A. Chubykin
 
 """
 
@@ -2908,7 +2925,7 @@ class DeviceReadout(QWidget):
         self.calX1Stage = copy.deepcopy(MSSInterface.getCoords(0,0))
         self.calX1M = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
         
-        QMessageBox.information(self, 'Secondary Calibration Finished', 'Please Check Magnification.')
+        QMessageBox.information(self, 'Secondary Calibration Finished', 'Secondary Calibration Finished')
 
         
 
@@ -3268,10 +3285,12 @@ class DeviceReadout(QWidget):
         self.calX1Stage = copy.deepcopy(MSSInterface.getCoords(0,0))
         self.calX1M = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
         
-        QMessageBox.information(self, 'Secondary Calibration Finished', 'Please Check Magnification.')
+        self.sc.terminate();
+        QMessageBox.information(self, 'Secondary Calibration Finished', 'Secondary Calibration Finished')
 
 
-        pass
+
+        return
 
     @pyqtSlot()
     def returnCoefficient(self):
@@ -3304,7 +3323,9 @@ class DeviceReadout(QWidget):
         self.parent.parent.calibrationstatus[self.unitnum][self.manipnum] = 4
         self.calibrateX1.setText("Cancel Calibration")
         self.calibrateX1.setStyleSheet("QWidget {background-color: rgb(139,137,137); color: rgb(255,0,0); font-weight: bold}")
+        
         self.ac.terminate()
+        QMessageBox.information(self, ' ', 'Primary Calibration Completed')
 
         
     def calibrateFirstX(self):
@@ -4397,7 +4418,7 @@ class SecondaryCalibration(QThread):
         cropped_maxLoc = tuple(cropped_maxLoc_list)
         cv2.circle(new_cropped_edge, cropped_maxLoc, 2, (255, 255, 255), 2)
 
-        cv2.imshow('contour', numpy.concatenate((new_cropped_img, new_cropped_edge, cropped_black_board, all_lines_black_board), axis = 1))
+        # cv2.imshow('contour', numpy.concatenate((new_cropped_img, new_cropped_edge, cropped_black_board, all_lines_black_board), axis = 1))
 
         maxLoc_list = list(maxLoc)
         maxLoc_list[0] = cropped_maxLoc[0] - 50 + old_maxLoc[0]
@@ -4422,8 +4443,8 @@ class SecondaryCalibration(QThread):
         cv2.circle(black_board, maxLoc, 2, (255, 255, 255), 1)
         cv2.circle(img, maxLoc, 2, (255, 255, 255), 1)
         #cv2.imshow("Stage %d" % stage, numpy.concatenate((img), axis = 1))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
         #logOutput.append("Tip at %d, %d " % (maxLoc[0], maxLoc[1]))
         logOutput.append("Offset on tip is %d, %d" % (maxLoc[0], maxLoc[1]))
         clickpointcoords = grid.getDeltaToScreenCenterMouseToUMFromCoords(maxLoc[0], maxLoc[1])
@@ -4583,7 +4604,7 @@ class SecondaryCalibration(QThread):
             clickpointcoords = self.Vision.fourtyXPipetteDetectionCorrdinate(numpyFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())  
             
             currentDistance = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
-            if currentDistance < 200:
+            if currentDistance < 100:
                 break
             
             #40x adjustment, divide result by 10 (clickpointcoords is in terms of 4x from previous claculation)
@@ -4984,7 +5005,7 @@ class AutoCalibration(QThread):
         cropped_maxLoc = tuple(cropped_maxLoc_list)
         cv2.circle(new_cropped_edge, cropped_maxLoc, 2, (255, 255, 255), 2)
 
-        cv2.imshow('contour', numpy.concatenate((new_cropped_img, new_cropped_edge, cropped_black_board, all_lines_black_board), axis = 1))
+        # cv2.imshow('contour', numpy.concatenate((new_cropped_img, new_cropped_edge, cropped_black_board, all_lines_black_board), axis = 1))
 
         maxLoc_list = list(maxLoc)
         maxLoc_list[0] = cropped_maxLoc[0] - 50 + old_maxLoc[0]
@@ -5009,8 +5030,8 @@ class AutoCalibration(QThread):
         cv2.circle(black_board, maxLoc, 2, (255, 255, 255), 1)
         cv2.circle(img, maxLoc, 2, (255, 255, 255), 1)
         #cv2.imshow("Stage %d" % stage, numpy.concatenate((img), axis = 1))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
         #logOutput.append("Tip at %d, %d " % (maxLoc[0], maxLoc[1]))
         logOutput.append("Offset on tip is %d, %d" % (maxLoc[0], maxLoc[1]))
         clickpointcoords = grid.getDeltaToScreenCenterMouseToUMFromCoords(maxLoc[0], maxLoc[1])
