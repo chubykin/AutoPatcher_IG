@@ -1,3 +1,27 @@
+"""
+License: GPL version 3.0
+January 25, 2016
+Copyright:
+
+This file is part of AutoPatcher_IG.
+
+    AutoPatcher_IG is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    AutoPatcher_IG is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with AutoPatcher_IG.  If not, see <http://www.gnu.org/licenses/>.
+
+@Author: Zhaolun Su, Alexander A. Chubykin
+
+"""
+
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -77,9 +101,9 @@ class ComputerVision:
 			print "fitting line length is ", minimum_length
 
 			print lines_unsorted
-			cv2.imshow('edges', edges)
-			cv2.waitKey(0)
-			cv2.destroyAllWindows()
+			# cv2.imshow('edges', edges)
+			# cv2.waitKey(0)
+			# cv2.destroyAllWindows()
 
 			lines = lines_unsorted
 			
@@ -102,9 +126,9 @@ class ComputerVision:
 				black_board = black_board + temp;
 				#aftermath = aftermath + 1
 				
-			cv2.imshow('black_board with lines', black_board)
-			cv2.waitKey(0)
-			cv2.destroyAllWindows()
+			# cv2.imshow('black_board with lines', black_board)
+			# cv2.waitKey(0)
+			# cv2.destroyAllWindows()
 
 			tip_x = 0;
 			tip_y = 0;
@@ -125,13 +149,13 @@ class ComputerVision:
 							tip_x = x;
 							tip_y = y;
 							minimum_distance = cumulative_distance;
-				print "the minimum distance is ", minimum_distance
+				# print "the minimum distance is ", minimum_distance
 				coordinate = (tip_y, tip_x);
 			cv2.circle(edges, coordinate, 2, (255, 255, 255), 2)
 
-			cv2.imshow('edges', edges)
-			cv2.waitKey(0)
-			cv2.destroyAllWindows()
+			# cv2.imshow('edges', edges)
+			# cv2.waitKey(0)
+			# cv2.destroyAllWindows()
 
 			return [tip_y, tip_x, minimum_distance]
 			break
