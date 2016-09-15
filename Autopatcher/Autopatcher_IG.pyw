@@ -2910,13 +2910,13 @@ class DeviceReadout(QWidget):
         # self.calManiPosition = copy.deepcopy(MSSInterface.getCoords(self.unitnum,self.manipnum))
         # w1 = QLabel("Secondary Calibration Completed")
         # w1.show()
-        self.calibrateX2.setText("Calibrating Sync Point")
-        self.calibrateX2.setStyleSheet("QWidget {background-color: rgb(139,137,137); color: rgb(255,0,0); font-weight: bold}")
-        self.sc.start_calibration(self.parent.axisdirections)
+        # self.calibrateX2.setText("Calibrating Sync Point")
+        # self.calibrateX2.setStyleSheet("QWidget {background-color: rgb(139,137,137); color: rgb(255,0,0); font-weight: bold}")
+        # self.sc.start_calibration(self.parent.axisdirections)
 
 
 
-        return
+        # return
 
         #old mannual calibration
         self.syncPointStage = copy.deepcopy(MSSInterface.getCoords(0,0))
@@ -4453,28 +4453,28 @@ class SecondaryCalibration(QThread):
 
     def run(self):
 
-        u = 2
-        m = 0
+        u = self.owner.unitnum
+        m = self.owner.manipnum
 
         # Adjust brightness
 
-        while True:
-            cameraDevice._queryFrame()
-            if numpy.average(rawFrame) < 90:
-                exposure = int(GUIhandle_Scope.exposureField.text())
-                cameraDevice.setExposure(exposure + 5)
-                GUIhandle_Scope.exposureField.setText(str(exposure + 5))
+        # while True:
+        #     cameraDevice._queryFrame()
+        #     if numpy.average(rawFrame) < 90:
+        #         exposure = int(GUIhandle_Scope.exposureField.text())
+        #         cameraDevice.setExposure(exposure + 5)
+        #         GUIhandle_Scope.exposureField.setText(str(exposure + 5))
     
-            elif numpy.average(rawFrame) > 120:
-                exposure = int(GUIhandle_Scope.exposureField.text())
-                cameraDevice.setExposure(exposure - 5)
-                GUIhandle_Scope.exposureField.setText(str(exposure - 5))
-            else:
-                break
-            cameraDevice._queryFrame()
-            time.sleep(0.2) # sleep 0.2 sec
+        #     elif numpy.average(rawFrame) > 120:
+        #         exposure = int(GUIhandle_Scope.exposureField.text())
+        #         cameraDevice.setExposure(exposure - 5)
+        #         GUIhandle_Scope.exposureField.setText(str(exposure - 5))
+        #     else:
+        #         break
+        #     cameraDevice._queryFrame()
+        #     time.sleep(0.2) # sleep 0.2 sec
 
-        print "Exposure adjustment finished"
+        # print "Exposure adjustment finished"
 
         # Turn on Equalization
 
@@ -4483,28 +4483,28 @@ class SecondaryCalibration(QThread):
 
         
 
-        # at 4x find pipette tip and move camera center to it.
-        while True:
+        # # at 4x find pipette tip and move camera center to it.
+        # while True:
 
-            cameraDevice._queryFrame()  
-            clickpointcoords = self.findPipetteTip(1)
-            currentDistance = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
-            if currentDistance < 10:
-                break
-            currentcoords = copy.deepcopy(MSSInterface.getCoords(0,0))
-            clickpointcoords[0] += currentcoords[0]
-            clickpointcoords[1] += currentcoords[1]
-            clickpointcoords.append(currentcoords[2])
-            MSSInterface.moveTo(0,0,clickpointcoords[0],clickpointcoords[1],clickpointcoords[2])
+        #     cameraDevice._queryFrame()  
+        #     clickpointcoords = self.findPipetteTip(1)
+        #     currentDistance = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
+        #     if currentDistance < 10:
+        #         break
+        #     currentcoords = copy.deepcopy(MSSInterface.getCoords(0,0))
+        #     clickpointcoords[0] += currentcoords[0]
+        #     clickpointcoords[1] += currentcoords[1]
+        #     clickpointcoords.append(currentcoords[2])
+        #     MSSInterface.moveTo(0,0,clickpointcoords[0],clickpointcoords[1],clickpointcoords[2])
 
-            print "Update", MSSInterface.getCoords(u,m)
-            print "Update", MSSInterface.getCoords(u,m)
-            print "Update", MSSInterface.getCoords(u,m)
-            print "Update", MSSInterface.getCoords(u,m)
-            print "Update", MSSInterface.getCoords(0,0)
-            print "Update", MSSInterface.getCoords(0,0)
-            print "Update", MSSInterface.getCoords(0,0)
-            print "Update", MSSInterface.getCoords(0,0)
+        #     print "Update", MSSInterface.getCoords(u,m)
+        #     print "Update", MSSInterface.getCoords(u,m)
+        #     print "Update", MSSInterface.getCoords(u,m)
+        #     print "Update", MSSInterface.getCoords(u,m)
+        #     print "Update", MSSInterface.getCoords(0,0)
+        #     print "Update", MSSInterface.getCoords(0,0)
+        #     print "Update", MSSInterface.getCoords(0,0)
+        #     print "Update", MSSInterface.getCoords(0,0)
 
         self.owner.scState = 1;
         self.sig.emit()
@@ -4544,7 +4544,11 @@ class SecondaryCalibration(QThread):
             MSSInterface.moveToRel(0,0,0,0, direction*stepSize)
             cameraDevice._queryFrame()
             print "matching 40x template" 
+            
+            result = self.Vision.getTemplateMatchResult1(copy.deepcopy(rawFrame), GUIhandle_Scope.equalizationCheckBox.isChecked());
+            
             result = self.Vision.getTemplateMatchResult(copy.deepcopy(rawFrame), GUIhandle_Scope.equalizationCheckBox.isChecked());
+
             print "matching finished"
             if result:
                 break
@@ -4566,7 +4570,11 @@ class SecondaryCalibration(QThread):
             
             MSSInterface.moveToRel(0,0,0,0, stepSize*direction)
             cameraDevice._queryFrame()
-            matchedTemplateIndex = self.Vision.findBestMatchingTemplate(rawFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())
+            if self.u == 1:
+                matchedTemplateIndex = self.Vision.findBestMatchingTemplate(rawFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())
+            else:
+                matchedTemplateIndex = self.Vision.findBestMatchingTemplate1(rawFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())
+
             print "+++++++++++++++++++++++++ Matched Template is ",  matchedTemplateIndex, "  +++++++++++++++++++++++++" 
             print "+++++++++++++++++++++++++ changedDirectionCount ", changedDirectionCount, "  +++++++++++++++++++++++++" 
             if matchedTemplateIndex == 1:
@@ -4604,7 +4612,7 @@ class SecondaryCalibration(QThread):
             clickpointcoords = self.Vision.fourtyXPipetteDetectionCorrdinate(numpyFrame, GUIhandle_Scope.equalizationCheckBox.isChecked())  
             
             currentDistance = numpy.sqrt(clickpointcoords[0]**2 + clickpointcoords[1]**2);
-            if currentDistance < 100:
+            if currentDistance < 50:
                 break
             
             #40x adjustment, divide result by 10 (clickpointcoords is in terms of 4x from previous claculation)
@@ -4653,14 +4661,15 @@ class SecondaryCalibration(QThread):
          
 class AutoCalibration(QThread):
     #Autocalibration signal
+    #This is Primary Calibration (DIfferentiate From Secondary Calibration)
     sig = pyqtSignal()
     def __init__(self, owner, parent = None):
         
         QThread.__init__(self, parent)
         self.owner = owner
         self.axisdirections = None;
-        self.unitnum = 2
-        self.manipnum = 0
+        self.unitnum = self.owner.unitnum
+        self.manipnum = self.owner.manipnum
         self.calStagePosition = [0, 0, 0]
         self.calStagePosition1 = [0, 0, 0]
         self.calStagePosition2 = [0, 0, 0]
@@ -5043,8 +5052,8 @@ class AutoCalibration(QThread):
 
     def run(self):
 
-        u = 2
-        m = 0
+        u = self.unitnum
+        m = self.manipnum
         devreadout = self
 
 
@@ -5054,13 +5063,13 @@ class AutoCalibration(QThread):
             cameraDevice._queryFrame()
             if numpy.average(rawFrame) < 90:
                 exposure = int(GUIhandle_Scope.exposureField.text())
-                cameraDevice.setExposure(exposure + 5)
-                GUIhandle_Scope.exposureField.setText(str(exposure + 5))
+                cameraDevice.setExposure(exposure + 3)
+                GUIhandle_Scope.exposureField.setText(str(exposure + 3))
     
             elif numpy.average(rawFrame) > 120:
                 exposure = int(GUIhandle_Scope.exposureField.text())
-                cameraDevice.setExposure(exposure - 5)
-                GUIhandle_Scope.exposureField.setText(str(exposure - 5))
+                cameraDevice.setExposure(exposure - 3)
+                GUIhandle_Scope.exposureField.setText(str(exposure - 3))
             else:
                 break
             cameraDevice._queryFrame()
@@ -5162,6 +5171,39 @@ class AutoCalibration(QThread):
         magnitude = math.sqrt((devreadout.calX2Stage[0]-devreadout.calX1Stage[0])**2+(devreadout.calX2Stage[1]-devreadout.calX1Stage[1])**2+(devreadout.calX2Stage[2]-devreadout.calX1Stage[2])**2)                            
         
         print "xmagnitude",magnitude
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        print "x1m=", devreadout.calX1M
+        print "x2m=", devreadout.calX2M
+        
         devreadout.StageUMperXMcoord = (magnitude/(devreadout.calX2M[0]-devreadout.calX1M[0]))                            
         print "stageumperxmcoord",devreadout.StageUMperXMcoord                            
         devreadout.Xhat = [(devreadout.calX2Stage[0]-devreadout.calX1Stage[0])/magnitude,(devreadout.calX2Stage[1]-devreadout.calX1Stage[1])/magnitude,(devreadout.calX2Stage[2]-devreadout.calX1Stage[2])/magnitude]                            

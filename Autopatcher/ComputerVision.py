@@ -43,7 +43,9 @@ class ComputerVision:
 	def __init__(self):
 
 		#Templates Import
-		self.templates = []   
+		self.templates = []
+		self.templates1 = []
+		self.templates2 = []   
 		self.matchingCoefficientThreshold = 10000000  #This value is pipette dependent
 											#25620492
 		for file in os.listdir("./configuration/PipetteTemplates/"):
@@ -52,7 +54,23 @@ class ComputerVision:
 				# cv2.imshow(file, img)
 				# cv2.waitKey(0)
 				# cv2.destroyAllWindows()
-				self.templates.append(img); 
+				self.templates.append(img);
+
+		for file in os.listdir("./configuration/PipetteTemplates1/"):
+			if file.endswith(".png") or file.endswith(".PNG"):
+				img = self.equalize(cv2.imread("./configuration/PipetteTemplates1/"+file,0))
+				# cv2.imshow(file, img)
+				# cv2.waitKey(0)
+				# cv2.destroyAllWindows()
+				self.templates1.append(img); 
+
+		for file in os.listdir("./configuration/PipetteTemplates2/"):
+			if file.endswith(".png") or file.endswith(".PNG"):
+				img = self.equalize(cv2.imread("./configuration/PipetteTemplates2/"+file,0))
+				# cv2.imshow(file, img)
+				# cv2.waitKey(0)
+				# cv2.destroyAllWindows()
+				self.templates2.append(img); 
 
 
 
@@ -260,6 +278,17 @@ class ComputerVision:
 			if matchingCoefficient >= self.matchingCoefficientThreshold:
 				return True
 
+		for index, matchingTemplate in enumerate(self.templates1):
+			# cv2.imshow('template', matchingTemplate)
+			# cv2.waitKey(0)
+			# cv2.destroyAllWindows()
+			print "getting matching coefficient"
+			matchingCoefficient = self.getTemplateMatchingCoefficient(frame, matchingTemplate)
+			print "Template Index ", index, " coefficient: ", matchingCoefficient
+			print "the template matching coefficient is ", matchingCoefficient
+			if matchingCoefficient >= self.matchingCoefficientThreshold:
+				return True
+
 		return False
 
 	def findBestMatchingTemplate(self, frame, equalizedBool):
@@ -269,6 +298,22 @@ class ComputerVision:
 		currentMax = 0;
 		maxIndex = 0;
 		for index, matchingTemplate in enumerate(self.templates):
+			matchingCoefficient = self.getTemplateMatchingCoefficient(frame, matchingTemplate)
+			matchingCoefficientNormalized = matchingCoefficient * np.std(self.templates[0]) / np.std(matchingTemplate)
+			# matchingCoefficientNormalized = matchingCoefficient 
+			if currentMax < matchingCoefficientNormalized:
+				currentMax = matchingCoefficientNormalized;
+				maxIndex = index
+
+		return maxIndex
+
+	def findBestMatchingTemplate1(self, frame, equalizedBool):
+		if not equalizedBool:
+			frame = self.equalize(frame);
+
+		currentMax = 0;
+		maxIndex = 0;
+		for index, matchingTemplate in enumerate(self.templates1):
 			matchingCoefficient = self.getTemplateMatchingCoefficient(frame, matchingTemplate)
 			matchingCoefficientNormalized = matchingCoefficient * np.std(self.templates[0]) / np.std(matchingTemplate)
 			# matchingCoefficientNormalized = matchingCoefficient 

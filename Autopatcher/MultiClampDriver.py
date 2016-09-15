@@ -44,7 +44,11 @@ This file is part of AutoPatcher_IG.
 
 class MCCThread():
 
-	def __init__(self):
+	def __init__(self, Mcc_Channel_Number = 1):
+		'''
+		Mcc_Channel_Number arguments indicates which channel in the found channel list will be returned
+		'''
+
 		#print "H000000000000000000000000000000000000000000000000"
 		# super(MCCThread, self).__init__()
 		#print "H111111111111111111111111111111111111111111111111"
@@ -72,7 +76,12 @@ class MCCThread():
 
 
 		#initialize handle
-		self.mcc = (mccControl(dllPath = "./DLL"))
+		if Mcc_Channel_Number == 1:
+			self.mcc = (mccControl(dllPath = "./DLL"))
+		else:
+			self.mcc = (mccControl(Mcc_Channel_Number = 2, dllPath = "./DLL"))
+
+
 
 
 
@@ -95,12 +104,18 @@ class MCCThread():
 	# 	time.sleep(0.005);	#sleep thread for 10 milli seconds
 
 
+	def setMeterResistEnable(self, u):
+
+		return self.mcc.SetMeterResistEnable(u);
+
 	def getMeterValue(self, u):
 
 		return self.mcc.GetMeterValue(u);
 
 	def getPrimarySignalGain(self):
 		return self.mcc.GetPrimarySignalGain();
+
+
 
 	def setHoldingPotential(self, hP):
 		self.HoldingPotential = hP;

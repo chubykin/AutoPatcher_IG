@@ -77,6 +77,7 @@ move_limit=150 # limit on the down movement, in um
 step_size=1# step size (0.2)
 move_counter=0
 marker_patch=0
+a=0
 
 ok_to_go = 1
 ok_to_go2 = 1
@@ -212,6 +213,11 @@ class DataControl2(Thread):
         """
         
 class DataControl(Thread):
+
+    if a==0:
+        daq_channel=5 # default analogue signal from DAQ channel 1 which is analogue channel 1
+        a=1
+
     data1 = []
     data2 = []
     #def __init__(self,BoardNum=0, Gain=UL.BIP5VOLTS):
@@ -263,10 +269,11 @@ class DataControl(Thread):
         QtCore.QObject.connect(self.timer, QtCore.SIGNAL("timeout()"), self.AcquireAll)
         self.timer.start(5) # timer has 5 ms counter interval (maximum acquisition rate of USB-1208FS is 50 kS/s per all used channels), Patching Current Step Pulse 5 ms
         # arduino clock speed 16 MHz, maybe can also acquire digital input at high enough rate, not sure how precise it is.        
-    
+        
     def AcquireAll(self):
         self.AIn(Chan=0)
-        self.AIn(Chan=1)
+
+        self.AIn(Chan=self.daq_channel) # switch chan from 1 to 2 depending on the selection button/check 
         
     def AIn(self,Chan=0):
         
@@ -708,8 +715,13 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
     def __init__(self,interface=None,parent=None):
 
         # initialize multiclamp driver
-        self.mcc = MultiClampDriver.MCCThread();
-        
+        self.mcc_channel1 = MultiClampDriver.MCCThread(Mcc_Channel_Number = 1);
+        self.mcc_channel2 = self.mcc_channel1 #MultiClampDriver.MCCThread(Mcc_Channel_Number = 2);
+        #self.mcc_channel1.setMeterResistEnable(True); #This is the built-in resistance calculation by the amplifier, we don't need it. Rachel
+        #self.mcc_channel2.setMeterResistEnable(True);
+        self.mcc = self.mcc_channel1;
+        self.selected_channel = 1;
+
 
         QtGui.QMainWindow.__init__(self,parent)
         # initialize thread        
@@ -820,6 +832,9 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
 
         self.btn_clear_tip = QtGui.QPushButton(QtGui.QIcon('./rsc/clean.png'), 'Clear Tip', self)
         QtCore.QObject.connect(self.btn_clear_tip, QtCore.SIGNAL("clicked()"),self.clear_tip)
+
+        self.btn_select_channel = QtGui.QPushButton(QtGui.QIcon('./rsc/Or.png'), 'Channel 1 Selected', self)
+        QtCore.QObject.connect(self.btn_select_channel, QtCore.SIGNAL("clicked()"),self.change_channel)
         
         #RachelWu 150727
         self.btn_next_step = QtGui.QPushButton(QtGui.QIcon('./rsc/fast_forward.png'), 'Next Stage', self)
@@ -878,13 +893,16 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
         lu0.addStretch(1)
         lu0.addWidget(self.label1)
         lu0.addWidget(self.btn_clear_tip)
+
+        
 #Rachel Wu 150727
         lu0.addWidget(self.btn_patch)
         lu0.addWidget(self.btn_next_step)
 
         
         lu1=QtGui.QVBoxLayout()        
-        lu1.addStretch(1)        
+        lu1.addStretch(1)  
+        lu0.addWidget(self.btn_select_channel)      
         lu1.addWidget(self.btn_pump)
         lu1.addWidget(self.btn_pump_burst)
         lu2=QtGui.QVBoxLayout()
@@ -976,6 +994,21 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
         self.DataVar.DBitOut(BitNum=self.pin_outs['pump'],BitValue=0)
         self.pin_switch(self.pin_outs['valve2'],0) # switch valve 2 to atmosphere)
         self.btn4.setChecked(False)
+
+    def change_channel(self):
+        if self.selected_channel == 1:
+            self.selected_channel =2;
+            #self.mcc.mcc = self.mcc.mcc.selectMC(1); 
+            self.DataVar.daq_channel = 1;
+            self.btn_select_channel.setText('Unit 2 Selected')
+        else:
+            self.selected_channel = 1;
+            self.DataVar.daq_channel = 5;
+            #self.mcc.mcc = self.mcc.mcc.selectMC (0); 
+            self.btn_select_channel.setText('Unit 1 Selected')
+        
+        print 'Current Channel: ', self.mcc
+
 
 #Rachel 150727
     def next_step(self):
@@ -1082,7 +1115,7 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
         
     def update_figures(self):
         # GetMeterValue Parameter:
-        # 3 is the IC on channel 2; 2 is VC on channel 2; 1 is IC on channel 1; 0 is DC on channel 1
+        # 3 is the IC on channel 2; 2 is VC on channel 2; 1 is IC on channel 1; 0 is resistance DC on channel 1
         #membraneCurrent = self.mcc.getMeterValue(3)
         #print "MembraneCurrent is ", membraneCurrent
 
@@ -1198,6 +1231,22 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
         return self.DataVar.DBitOut(BitNum=pin_number,BitValue=value)
 
     def calculateResistance(self):
+
+        # GetMeterValue Parameter:
+        # 3 is the IC on channel 2; 2 is VC on channel 2; 1 is IC on channel 1; 0 is DC on channel 1
+        #membraneCurrent = self.mcc.getMeterValue(3)
+        #print "MembraneCurrent is ", membraneCurrent
+        ######  Super Important : Set Resistance Enable option before using getMeterValue() ####### 
+        
+        ## Resistance In Mega Ohm
+        """if self.selected_channel == 1:
+            resistance = self.mcc.getMeterValue(0)/1000000
+        else:
+            resistance = self.mcc.getMeterValue(2)/1000000
+        #print 'Resistance',  resistance
+        return resistance"""
+
+        ###########################
         global delta_data2
         delta_data2 = np.max(self.DataVar.data2[-50:])-np.min(self.DataVar.data2[-50:])
         invert_current=1/(delta_data2 + 0.000000000001)
@@ -1205,6 +1254,8 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
             temporary_resistance=-0.0119*(invert_current**3)+0.3025*(invert_current**2)+5.2925*invert_current-0.4507
         else:
             temporary_resistance=81.794*invert_current-1091.9
+
+        temporary_resistance=temporary_resistance/2
         return temporary_resistance
 
         # Example resistance = calculateResistance()
@@ -1525,15 +1576,18 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
             
                 
         elif marker_patch==7: # marker_patch==7 - patching unsuccessful
-            QtGui.QMessageBox.information(self,'', 'Patch unsuccessful. Please save patchlog, change pipette, and restart')
-            if file_save_bool == 0:
-                self.fileSave()
-                file_save_bool = 1
+            
+            
             self.mcc.setTestSignalEnable(False)
             self.mcc.setHoldingEnable(False)            
             self.mcc.setMode(2)
-            marker_patch=0
             Ihold = None
+            if file_save_bool == 0:    
+                file_save_bool = 1
+                QtGui.QMessageBox.information(self,'', 'Patch unsuccessful. Please save patchlog, change pipette, and restart')
+                self.fileSave()
+            elif file_save_bool == 1:
+                marker_patch=0
             #self.fileQuit()
            
 
@@ -1657,7 +1711,7 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
         # #self.MyUnit.talk(a)
         # #for i in range(20):
         print "moving down, step size",  step_size
-        MSSInterface.moveToRelWithoutWaiting(2,0,0,0, abs(step_size))
+        MSSInterface.moveToRelWithoutWaiting(self.selected_channel ,0,0,0, abs(step_size))
         #time.sleep(self.DelayInterval_move)
         QtCore.QTimer.singleShot(1500,self.singleShot_move_stop)
         #a='#3!A'
@@ -1674,7 +1728,7 @@ class ApplicationWindow(QtGui.QMainWindow,Thread): # possibly delete in the auto
         #time.sleep(self.DelayInterval_move)
         print "moving down, step size",  step_size
 
-        MSSInterface.moveToRelWithoutWaiting(2,0,0,0, -abs(step_size))
+        MSSInterface.moveToRelWithoutWaiting(self.selected_channel,0,0,0, -abs(step_size))
 
         QtCore.QTimer.singleShot(1000,self.singleShot_move_stop)
         #a='#3!A'

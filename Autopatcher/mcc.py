@@ -71,7 +71,7 @@ errdict={6000:'MCCMSG_ERROR_NOERROR', 6001:'MCCMSG_ERROR_OUTOFMEMORY',\
          6006:'MCCMSG_ERROR_MCCCOMMANDFAIL'}
 
 class mccControl:
-    def __init__(self,dllPath=None): #use this one for now
+    def __init__(self,Mcc_Channel_Number = 1, dllPath=None): #use this one for now
         print "here"
         print(dllPath)
         self.mccDllPath='C:/Axon/MultiClamp 700B Commander/3rd Party Support/AxMultiClampMsg/'
@@ -95,6 +95,7 @@ class mccControl:
             firstMC=self.FindFirstMultiClamp()
         except:
             raise IOError('no multiclamps found, is mcc on?')
+        
         self.getMCS(firstMC)
         self.selectMC(0)
         self._pnPointer=byref(c_int())
@@ -284,6 +285,7 @@ class mccControl:
         _puCOMPortID=byref(c_uint(0))
         _puDeviceID=byref(c_uint(0))
         _puChannelID=byref(c_uint(0)) #head stage, need a way to switch this quickly
+        print "Finding The Other Clamps"
         if self.aDLL.MCCMSG_FindNextMultiClamp(self.hMCCmsg, _puModel, _pszSerialNum, uBufSize, _puCOMPortID, _puDeviceID, _puChannelID, self._pnError):
             outTup=(
                     val(_puModel,c_uint_p),\
